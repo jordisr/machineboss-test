@@ -9,6 +9,7 @@ feature_table = []
 for g in record.features:
     if g.type == 'gene':
         feature_table.append([g.qualifiers['gene'][0], int(g.location.start),  int(g.location.end),  g.location.strand])
+        print(feature_table[-1])
 
 feature_table.sort(key=operator.itemgetter(1))
 print(feature_table[:10])
@@ -28,8 +29,8 @@ with open('ecoli.paf','r') as f:
             read_strand = -1
 
         for g in feature_table:
-            if read_strand != g[3]:
-                continue
+            #if read_strand != g[3]:
+            #    continue
             if read_end < g[1]:
                 break
             elif g[2] < read_start:
@@ -39,7 +40,7 @@ with open('ecoli.paf','r') as f:
                     read_to_genes[read_name] = [g[0]]
                 else:
                     read_to_genes[read_name].append(g[0])
-                print('Read {}. Gene {} ({}). \n\tRead starts at {} and ends at {}. Gene starts at {} and ends at {}'.format(read_name, g[0], g[3],read_start, read_end,g[1],g[2]))
+                print('Read {}. Gene {} ({}). \n\tRead starts at {} and ends at {} ({}). Gene starts at {} and ends at {} ({})'.format(read_name, g[0], g[3],read_start, read_end, read_strand, g[1], g[2], g[3]))
 
-with open('overlapping_genes.json','w') as jf:
+with open('overlapping_genes_fixed.json','w') as jf:
     print(json.dumps(read_to_genes,sort_keys=True, indent=1),file=jf)
