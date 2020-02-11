@@ -4,6 +4,7 @@ import numpy as np
 import csv
 import os
 import sys
+from itertools import groupby
 
 def fasta_format(name, seq, width=60):
     fasta = '>'+name+'\n'
@@ -16,6 +17,6 @@ def fasta_format(name, seq, width=60):
 
 logits = np.loadtxt(sys.argv[1], delimiter=',', skiprows=1)
 argmax_path = np.argmax(logits, axis=1)
-viterbi_string = ''.join(np.take(np.array(list("ACGT")), np.array([g[0] for g in groupby(argmax_path)])))
+viterbi_string = ''.join(np.take(np.array(["A","C","G","T", ""]), np.array([g[0] for g in groupby(argmax_path)])))
 
 print(fasta_format(sys.argv[1], viterbi_string))

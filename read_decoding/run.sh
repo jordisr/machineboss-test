@@ -25,22 +25,15 @@ done
 
 # boss machine commands here
 mkdir json
-width=10
-for i in $(ls logits/*.npy)
+
+# convert JSON machines to FASTA
+for w in w5 w50 viterbi
 do
-    boss --recognize-merge-csv nanopore_test.csv --beam-decode --beam-width $width > json/$i.w$width.json
+  for i in $(ls logits/*.$w.json); do python json_to_fasta.py $i >> decoded.$w.fasta; done
 done
 
-for i in $(ls logits/*.w25.json); do python json_to_fasta.py $i >> beam25.fasta; done
-
-for i in $(ls logits/*.w25.json)
-do
-    python json_to_fasta.py $i >> beam25.fasta
-done
-
-for i in $(ls logits/*.w50.json)
-do
-    python json_to_fasta.py $i >> beam50.fasta
-done
-
+# get viterbi with PoreOver (instead of Machine Boss)
 for i in $(ls logits/*.npy); do python ~/work2/poreover decode $i --basecaller bonito 1>> viterbi.fasta; done
+
+# get viterbi with PoreOver (instead of Machine Boss)
+for i in $(ls logits/*.csv); do python viterbi_decode.py $i >> decoded.viterbi_py.fasta; done
